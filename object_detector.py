@@ -21,6 +21,9 @@ net.setInput(blob)
 outs = net.forward(output_layers)
 
 #Framing the detected objects with identifiers
+boxes= []           #lists declarations where we will store all the data for eeach detected object
+confidences = []
+class_ids = []
 for out in outs:               #iterate through the outputs of all layers (outs)
     for detection in out:      #iterate through all the detected objects within each layer
         scores = detection[5:]
@@ -34,12 +37,19 @@ for out in outs:               #iterate through the outputs of all layers (outs)
             
             #checking what object are detected and where the centre opf the object is. uncomment to make it work
             # cv2.circle(img,(center_x, center_y), 10, (0,255,0),2)
-
-            #object rectangle
-            x = int (center_x - w/2)
+            
+            x = int (center_x - w/2) #object rectangle
             y = int (center_y - h /2)
-            cv2.rectangle(img,(x, y), (x+w,y+h), (0,255,0),2)
+            boxes.append([x,y,w,h])                 #adds object data to each list
+            confidences.append(float(confidence))
+            class_ids.append(class_id)
 
+detected_objects_num = len (boxes)
+for i in range(len(boxes)): #create boxes
+    x,y,w,h=boxes[i]
+    label = classes[class_ids[i]]
+    cv2.rectangle(img, (x,y),(x+w,y+h),(0,255,0))
+    cv2.putText(img, label, (x,y+30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1)
 cv2.imshow("Image", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
