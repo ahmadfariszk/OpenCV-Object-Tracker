@@ -1,1 +1,1 @@
-object_color = np.random.uniform(0,255, size=(len(classes), 3))
+this file is written to better understand how object detection in this project works
