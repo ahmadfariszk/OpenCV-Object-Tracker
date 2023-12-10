@@ -44,12 +44,17 @@ for out in outs:               #iterate through the outputs of all layers (outs)
             confidences.append(float(confidence))
             class_ids.append(class_id)
 
-detected_objects_num = len (boxes)
+object_colors = np.random.uniform(0,255, size=(len(classes), 3)) #assign random colors 
+
+indeces = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4) #intergrating NMS
 for i in range(len(boxes)): #create boxes
-    x,y,w,h=boxes[i]
-    label = classes[class_ids[i]]
-    cv2.rectangle(img, (x,y),(x+w,y+h),(0,255,0))
-    cv2.putText(img, label, (x,y+30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1)
+    if i in indeces:    #checks if the detcted objext is in the NMS list
+        x,y,w,h=boxes[i]
+        object_color = object_colors[i] 
+        label = classes[class_ids[i]]
+        cv2.rectangle(img, (x,y),(x+w,y+h),(object_color), 2)
+        cv2.putText(img, label, (x,y+30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (object_color), 2, cv2.LINE_AA)
+
 cv2.imshow("Image", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

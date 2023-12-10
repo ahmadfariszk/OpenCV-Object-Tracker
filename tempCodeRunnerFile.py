@@ -1,0 +1,1 @@
+object_color = np.random.uniform(0,255, size=(len(classes), 3))
