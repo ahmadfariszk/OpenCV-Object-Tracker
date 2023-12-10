@@ -1,3 +1,6 @@
+#this file was provided by the original creator for this project. I have made another file 
+#called concept_object_detector to better understand the context and how this part of the code works.
+
 import cv2
 import numpy as np
 

@@ -1,4 +1,4 @@
-### this file is written to better understand how object detection in this project works
+#this file is written to better understand how object detection in this project works
 
 import cv2
 import numpy as np
