@@ -3,6 +3,18 @@ import cv2
 import numpy as np 
 from object_detection import ObjectDetection
 
+def frame_stats():
+  print("Tracked objects ")
+  print(objects_tracked)
+  print("Current Frame Points ")
+  print(centerpoints_current)
+  print("Previous Frame Points ")
+  print(centerpoints_previous)
+
+def distance_between_points(a, b):
+  d = math.hypot(b[0]-a[0], b[1]- a[1])
+  return d
+
 #Initialise object detection
 od = ObjectDetection()
 
@@ -34,7 +46,7 @@ while True:
   if frame_counter <= 2:
     for point1 in centerpoints_current:            #point 1 is from the current frame
       for point2 in centerpoints_previous:         #point 2 id from the previous frame
-        distance = math.hypot(point2[0]-point1[0], point2[1]- point1[1]) #determine distance with previous frame point
+        distance = distance_between_points(point1, point2) #determine distance with previous frame point
         #print("point1 ", point1[0],  point1[1], "point2 ", point2[0], point2[1],"distance ", distance) #debug
         if distance < 30:    #puting the previous and current points as the same object between frames when it is close together
           objects_tracked[track_counter] = point1
@@ -46,7 +58,7 @@ while True:
     for object_id, point2 in objects_tracked_copy.items():
       object_exists = False
       for point1 in centerpoints_current:  #object id is the persistent (through diff frames) id ob tracked object
-        distance = math.hypot(point2[0]-point1[0], point2[1]- point1[1])
+        distance = distance_between_points(point1, point2)
         if distance < 30: #check if the same object
           objects_tracked[object_id] = point1 #update object position
           object_exists = True
@@ -66,13 +78,7 @@ while True:
     cv2.putText(frame, str(object_id), (point1[0], point1[1]-7), 0, 1, (0,0,255), 2)
 
     
-  #debug
-  print("Tracked objects ")
-  print(objects_tracked)
-  print("Current Frame Points ")
-  print(centerpoints_current)
-  print("Previous Frame Points ")
-  print(centerpoints_previous)
+  #frame_stats()  #uncomment to debug
 
   #transfer the current points to previous point for use in next iteration
   centerpoints_previous = centerpoints_current.copy() 
