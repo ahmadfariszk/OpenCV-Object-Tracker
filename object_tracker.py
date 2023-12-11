@@ -40,7 +40,8 @@ while True:
           objects_tracked[track_counter] = point1
           track_counter += 1
   else:
-    objects_tracked_copy = objects_tracked.copy() 
+    objects_tracked_copy = objects_tracked.copy()
+    centerpoints_current_copy = centerpoints_current.copy() 
     #the dictionary is copied so that items can be removed (from the original) while looping through the copy
     for object_id, point2 in objects_tracked_copy.items():
       object_exists = False
@@ -49,10 +50,16 @@ while True:
         if distance < 30: #check if the same object
           objects_tracked[object_id] = point1 #update object position
           object_exists = True
+          if point1 in centerpoints_current:
+            centerpoints_current.remove(point1) #removes points that acquired an id
           continue
       if not object_exists:
         objects_tracked.pop(object_id)
 
+    #assign id to new tracked objects
+    for point in centerpoints_current:
+      objects_tracked[track_counter] = point
+      track_counter += 1
 
   for object_id, point1 in objects_tracked.items():
     cv2.circle(frame, point1, 5, (0,0,255), -1)  #draw points
@@ -67,10 +74,11 @@ while True:
   print("Previous Frame Points ")
   print(centerpoints_previous)
 
+  #transfer the current points to previous point for use in next iteration
   centerpoints_previous = centerpoints_current.copy() 
 
   cv2.imshow("Frame", frame)
-  key = cv2.waitKey(0)      #returns the code of the key pressed
+  key = cv2.waitKey(1)      #returns the code of the key pressed
   if key == 27:             #escape key
     break
 
