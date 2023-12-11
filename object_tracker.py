@@ -76,6 +76,8 @@ while True:
   for object_id, point1 in objects_tracked.items():
     cv2.circle(frame, point1, 5, (0,0,255), -1)  #draw points
     cv2.putText(frame, str(object_id), (point1[0], point1[1]-7), 0, 1, (0,0,255), 2)
+  puttext_counter_track= "Number of tracked objects: {}".format(track_counter)
+  cv2.putText(frame,puttext_counter_track, (100,50), 0, 1, (0,0,255), 2)
 
     
   #frame_stats()  #uncomment to debug
@@ -84,7 +86,7 @@ while True:
   centerpoints_previous = centerpoints_current.copy() 
 
   cv2.imshow("Frame", frame)
-  key = cv2.waitKey(1)      #returns the code of the key pressed
+  key = cv2.waitKey(0)      #returns the code of the key pressed
   if key == 27:             #escape key
     break
 
