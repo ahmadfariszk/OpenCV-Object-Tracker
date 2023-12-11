@@ -13,9 +13,9 @@ objects_tracked = {}
 track_counter = 0    #counter used to assign new  entries to \object_tracked dictionary
 
 while True:
-  _, frame = cap.read()    #cap.read() returns a tuple.
+  check_frame, frame = cap.read()    #cap.read() returns a tuple. first value checks if there is a frame.
   frame_counter += 1
-  if not _:
+  if not check_frame:
     break
 
   centerpoints_current = []
@@ -31,7 +31,7 @@ while True:
     cv2.rectangle(frame, (x,y), (x+w,y+h), (0, 255, 0), 2)
 
   #begin tracking between frames
-  if frame_counter <=1:
+  if frame_counter <= 2:
     for point1 in centerpoints_current:            #point 1 is from the current frame
       for point2 in centerpoints_previous:         #point 2 id from the previous frame
         distance = math.hypot(point2[0]-point1[0], point2[1]- point1[1]) #determine distance with previous frame point
@@ -42,9 +42,9 @@ while True:
   else:
     objects_tracked_copy = objects_tracked.copy() 
     #the dictionary is copied so that items can be removed (from the original) while looping through the copy
-    for point1 in centerpoints_current:
+    for object_id, point2 in objects_tracked_copy.items():
       object_exists = False
-      for object_id, point1 in objects_tracked_copy.items():  #object id is the persistent (through diff frames) id ob tracked object
+      for point1 in centerpoints_current:  #object id is the persistent (through diff frames) id ob tracked object
         distance = math.hypot(point2[0]-point1[0], point2[1]- point1[1])
         if distance < 30: #check if the same object
           objects_tracked[object_id] = point1 #update object position
@@ -56,7 +56,7 @@ while True:
 
   for object_id, point1 in objects_tracked.items():
     cv2.circle(frame, point1, 5, (0,0,255), -1)  #draw points
-    cv2.putText(frame, str(object_id), (point1[0], point1[1]-7), 0, 1, (0,0,255), 1)
+    cv2.putText(frame, str(object_id), (point1[0], point1[1]-7), 0, 1, (0,0,255), 2)
 
     
   #debug
